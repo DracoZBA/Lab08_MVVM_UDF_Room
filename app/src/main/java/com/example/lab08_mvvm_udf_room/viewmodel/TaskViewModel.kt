@@ -18,8 +18,8 @@ class TaskViewModel(private val dao: TaskDao) : ViewModel() {
         }
     }
 
-    fun addTask(description: String) {
-        val newTask = Task(description = description)
+    fun addTask(title: String, description: String = "") {
+        val newTask = Task(title = title, description = description)
         viewModelScope.launch {
             dao.insertTask(newTask)
             _tasks.value = dao.getAllTasks()
@@ -28,7 +28,7 @@ class TaskViewModel(private val dao: TaskDao) : ViewModel() {
 
     fun toggleTaskCompletion(task: Task) {
         viewModelScope.launch {
-            dao.updateTask(task.copy(isCompleted = !task.isCompleted))
+            dao.updateTask(task.copy(completed = !task.completed))
             _tasks.value = dao.getAllTasks()
         }
     }
@@ -39,4 +39,20 @@ class TaskViewModel(private val dao: TaskDao) : ViewModel() {
             _tasks.value = emptyList()
         }
     }
+
+    fun deleteTask(task: Task) {
+        viewModelScope.launch {
+            dao.delete(task)
+            _tasks.value = dao.getAllTasks()
+        }
+    }
+
+    fun updateTask(task: Task) {
+        viewModelScope.launch {
+            dao.update(task)
+            _tasks.value = dao.getAllTasks()
+        }
+    }
+
+
 }
